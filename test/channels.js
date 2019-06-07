@@ -409,7 +409,7 @@ describe('Channels - Members are update correctly', function() {
 	});
 });
 
-describe('Channels - Distinct channels', function() {
+describe.only('Channels - Distinct channels', function() {
 	const tommasoID = `tommaso-${uuidv4()}`;
 	const thierryID = `thierry-${uuidv4()}`;
 	const newMember = `member-${uuidv4()}`;
@@ -420,7 +420,7 @@ describe('Channels - Distinct channels', function() {
 
 	const tommasoClient = getTestClient();
 	const thierryClient = getTestClient();
-	let distinctChannel;
+	let ThierryDistinctChannel;
 
 	const unique = uuidv4();
 	before(async () => {
@@ -429,56 +429,37 @@ describe('Channels - Distinct channels', function() {
 		await createUsers([newMember]);
 	});
 
-	it('create a distinct channel without specifying members should fail', async function() {
-		const channel = thierryClient.channel(channelGroup, '');
-		await expectHTTPErrorCode(
-			400,
-			channel.create(),
-			'StreamChat error code 4: GetOrCreateChannel failed with error: "When using member based IDs specify at least 2 members"',
-		);
-	});
-
-	it('create a distinct channel with only one member should fail', async function() {
-		const channel = thierryClient.channel(channelGroup, '', {
-			members: [tommasoID],
-		});
-		await expectHTTPErrorCode(
-			400,
-			channel.create(),
-			'StreamChat error code 4: GetOrCreateChannel failed with error: "When using member based IDs specify at least 2 members"',
-		);
-	});
-
-	it('create a distinct channel with 2 members should succeed', async function() {
-		distinctChannel = thierryClient.channel(channelGroup, '', {
+	it('thierry create a distinct channel with tommaso', async function() {
+		ThierryDistinctChannel = thierryClient.channel(channelGroup, '', {
 			members: [tommasoID, thierryID],
 			unique: unique,
 		});
-		await distinctChannel.create();
+		ThierryDistinctChannel.on('message.new', function(e) {
+			console.log('thierry received new event message', e);
+		});
+		await ThierryDistinctChannel.watch();
 	});
 
-	it('query previous created distinct channel', async function() {
-		const channels = await thierryClient.queryChannels({
+	it('tommaso opens a distinct channel', async function() {
+		const channels = await tommasoClient.queryChannels({
+			members: [tommasoID, thierryID],
+			unique: unique,
+		});
+		channels[0].on('message.new', function(e) {
+			console.log('tommaso received new event message', e);
+		});
+	});
+
+	it('thierry sends a message and tommaso receives', async function() {
+		const channels = await tommasoClient.queryChannels({
 			members: [tommasoID, thierryID],
 			unique: unique,
 		});
 		expect(channels.length).to.be.equal(1);
 		expect(channels[0].data.unique).to.be.equal(unique);
-	});
+		await channels[0].sendMessage({ text: 'hi' });
+		await ThierryDistinctChannel.sendMessage({ text: 'hi' });
 
-	it('adding members to distinct channel should fail', async function() {
-		await expectHTTPErrorCode(
-			400,
-			distinctChannel.addMembers([newMember]),
-			'StreamChat error code 4: UpdateChannel failed with error: "cannot add or remove members in a distinct channel, please create a new distinct channel with the desired members"',
-		);
-	});
-
-	it('removing members from a distinct channel should fail', async function() {
-		await expectHTTPErrorCode(
-			400,
-			distinctChannel.removeMembers([tommasoID]),
-			'StreamChat error code 4: UpdateChannel failed with error: "cannot add or remove members in a distinct channel, please create a new distinct channel with the desired members"',
-		);
+		await sleep(2000);
 	});
 });

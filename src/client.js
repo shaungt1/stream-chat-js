@@ -439,7 +439,7 @@ export class StreamChat {
 				name: name || uri.split('/').reverse()[0],
 			};
 			if (contentType != null) {
-				fileField.type = contentType;
+				//	fileField.type = contentType;
 			}
 		}
 
