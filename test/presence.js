@@ -501,6 +501,13 @@ describe('Count Guest users using state', function() {
 			expect(lastWatcherInfo.watcher_count).to.be.equal(i + 1);
 		}
 
+		const resp= await channel.query({
+			messages: { limit: 10 },
+			members: { limit: 50, offset: 0 },
+			watchers: { limit: 6, offset: 0 }
+		});
+		expect(resp.watchers.length).to.be.equal(nClients);
+		expect(resp.watcher_count).to.be.equal(nClients);
 		//stop watching or disconnect should update the counters properly
 		for (let i = 0; i < nClients; i++) {
 			if (i % 2 === 0) {
