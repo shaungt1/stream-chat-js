@@ -190,6 +190,7 @@ describe('Presence', function() {
 		it('should be offline after disconnect', async function() {
 			const userID = `timmy-${uuidv4()}`;
 			const testClientP = await getTestClientForUser(userID, 'mystatus');
+			await sleep(200);
 			await testClientP.disconnect();
 			const response = await user1Client.queryUsers({ id: { $in: [userID] } });
 			const timmy = response.users[0];
