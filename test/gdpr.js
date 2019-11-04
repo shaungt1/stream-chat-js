@@ -2,6 +2,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import assertArrays from 'chai-arrays';
 import Immutable from 'seamless-immutable';
 import { StreamChat } from '../src';
 import fs from 'fs';
@@ -20,6 +21,7 @@ import uuidv4 from 'uuid/v4';
 const expect = chai.expect;
 
 chai.use(chaiAsPromised);
+chai.use(assertArrays);
 
 if (process.env.NODE_ENV !== 'production') {
 	require('longjohn');
@@ -59,7 +61,7 @@ describe('GDPR endpoints', function() {
 		const client = await getTestClientForUser(userID);
 		const exportPromise = client.exportUser(userID);
 		await expect(exportPromise).to.be.rejectedWith(
-			'users can only be exported server side',
+			'StreamChat error code 17: ExportUser failed with error: "ExportUser can only be used with server-side auth"',
 		);
 
 		// server side is allowed
