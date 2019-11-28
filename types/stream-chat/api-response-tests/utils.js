@@ -1,6 +1,6 @@
 const { StreamChat } = require('../../../dist/index.js');
-const apiKey = '892s22ypvt6m';
-const apiSecret = '5cssrefv55rs3cnkk38kfjam2k7c2ykwn4h79dqh66ym89gm65cxy4h9jx4cypd6';
+const apiKey = 'upm4tebtgppk';
+const apiSecret = 'pd5kbydzz6h7hqsfh37ksprdhnjg3zmmxmyvv2zuax2qhm6f3yvwg33zezv8vwtb';
 module.exports = {
 	getTestClient: function getTestClient(serverSide) {
 		return new StreamChat(apiKey, serverSide ? apiSecret : null);

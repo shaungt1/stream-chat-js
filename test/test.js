@@ -650,7 +650,7 @@ describe('Chat', function() {
 		});
 
 		it('Invalid secret should fail setUser', async function() {
-			const client3 = new StreamChat('892s22ypvt6m', 'invalidsecret');
+			const client3 = new StreamChat('upm4tebtgppk', 'invalidsecret');
 			await expectHTTPErrorCode(
 				401,
 				client3.setUser({

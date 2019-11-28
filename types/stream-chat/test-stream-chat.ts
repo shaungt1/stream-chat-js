@@ -15,7 +15,7 @@ const devToken = client.devToken('joshua'); // $ExpectType string
 const userToken = client.createToken('james', 3600); // $ExpectType string
 const authType = client.getAuthType(); // $ExpectType string
 
-client.setBaseURL('https://chat-us-east-1.stream-io-api.com/'); // $ExpectType void
+client.setBaseURL('https://chat-proxy-us-east.stream-io-api.com/'); // $ExpectType void
 client.updateAppSettings({}); // $ExpectType Promise<object>
 const currentSettings = client.getAppSettings(); // $ExpectType Promise<object>
 client.disconnect(); // $ExpectType Promise<void>
@@ -24,10 +24,10 @@ client.setUser({ id: 'john', phone: 2 }, devToken); // $ExpectType Promise<void>
 client.setAnonymousUser(); // $ExpectType Promise<void>
 client.setGuestUser({ id: 'steven' }); // $ExpectType Promise<void>
 
-client.get('https://chat-us-east-1.stream-io-api.com/', { id: 2 }); // $ExpectType Promise<APIResponse>
-client.put('https://chat-us-east-1.stream-io-api.com/', { id: 2 }); // $ExpectType Promise<APIRespone>
-client.post('https://chat-us-east-1.stream-io-api.com/', { id: 2 }); // $ExpectType Promise<APIResponse>
-client.delete('https://chat-us-east-1.stream-io-api.com/', { id: 2 }); // $ExpectType Promise<APIResponse>
+client.get('https://chat-proxy-us-east.stream-io-api.com/', { id: 2 }); // $ExpectType Promise<APIResponse>
+client.put('https://chat-proxy-us-east.stream-io-api.com/', { id: 2 }); // $ExpectType Promise<APIRespone>
+client.post('https://chat-proxy-us-east.stream-io-api.com/', { id: 2 }); // $ExpectType Promise<APIResponse>
+client.delete('https://chat-proxy-us-east.stream-io-api.com/', { id: 2 }); // $ExpectType Promise<APIResponse>
 
 client.sendFile('aa', 'bb', 'text.jpg', 'image/jpg', { id: 'james' }); // $ExpectType Promise<FileUploadAPIResponse>
 
