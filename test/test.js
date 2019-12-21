@@ -2239,6 +2239,7 @@ describe('Chat', function() {
 				user: thierry,
 			});
 			message = r.message;
+			await channel.sendReaction(message.id, { type: 'like' }, thierry.id);
 			delete message.user.online;
 			delete message.user.last_active;
 			delete message.user.updated_at;
@@ -2268,6 +2269,19 @@ describe('Chat', function() {
 			delete r.message.user.updated_at;
 			delete r.message.channel;
 			expect(r.message).to.deep.eq(message);
+		});
+
+		it('client side get a message should include own reactions', async () => {
+			const client = await getTestClientForUser(thierry.id);
+
+			const r = await client.getMessage(message.id);
+			console.log(r.message);
+			expect(r.message.own_reactions).to.have.length(1);
+			expect(r.message.own_reactions[0].type).to.eq('like');
+			delete r.message.user.online;
+			delete r.message.user.last_active;
+			delete r.message.user.updated_at;
+			delete r.message.channel;
 		});
 
 		it('client side get a message does permission checking', async () => {
