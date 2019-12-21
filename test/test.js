@@ -2234,15 +2234,17 @@ describe('Chat', function() {
 				members: [thierry.id],
 			});
 			await channel.create();
-			const r = await channel.sendMessage({
+			let r = await channel.sendMessage({
 				text: '@thierry how are you doing?',
 				user: thierry,
 			});
+			r = await channel.sendReaction(r.message.id, { type: 'like' }, thierry.id);
 			message = r.message;
-			await channel.sendReaction(message.id, { type: 'like' }, thierry.id);
 			delete message.user.online;
 			delete message.user.last_active;
 			delete message.user.updated_at;
+			delete r.message.latest_reactions;
+			message.own_reactions = [];
 		});
 
 		it('should return a 404 for a message that does not exist', () => {
@@ -2253,10 +2255,12 @@ describe('Chat', function() {
 		it('servers side get a message should work', async () => {
 			const r = await serverClient.getMessage(message.id);
 			expect(r.message.channel.id).to.eq(channelID);
+			// cleanup fields before doing deep eql comparison
 			delete r.message.user.online;
 			delete r.message.user.last_active;
 			delete r.message.user.updated_at;
 			delete r.message.channel;
+			delete r.message.latest_reactions;
 			expect(r.message).to.deep.eq(message);
 		});
 
@@ -2264,10 +2268,13 @@ describe('Chat', function() {
 			const client = await getTestClientForUser(thierry.id);
 			const r = await client.getMessage(message.id);
 			expect(r.message.channel.id).to.eq(channelID);
+			// cleanup fields before doing deep eql comparison
 			delete r.message.user.online;
 			delete r.message.user.last_active;
 			delete r.message.user.updated_at;
 			delete r.message.channel;
+			delete r.message.latest_reactions;
+			r.message.own_reactions = [];
 			expect(r.message).to.deep.eq(message);
 		});
 
@@ -2275,13 +2282,8 @@ describe('Chat', function() {
 			const client = await getTestClientForUser(thierry.id);
 
 			const r = await client.getMessage(message.id);
-			console.log(r.message);
 			expect(r.message.own_reactions).to.have.length(1);
 			expect(r.message.own_reactions[0].type).to.eq('like');
-			delete r.message.user.online;
-			delete r.message.user.last_active;
-			delete r.message.user.updated_at;
-			delete r.message.channel;
 		});
 
 		it('client side get a message does permission checking', async () => {
