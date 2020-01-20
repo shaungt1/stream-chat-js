@@ -3,9 +3,12 @@ import chai from 'chai';
 const expect = chai.expect;
 const apiKey = '892s22ypvt6m';
 const apiSecret = '5cssrefv55rs3cnkk38kfjam2k7c2ykwn4h79dqh66ym89gm65cxy4h9jx4cypd6';
+const stagingURL = 'https://chat-us-east-staging.stream-io-api.com';
 
 export function getTestClient(serverSide) {
-	return new StreamChat(apiKey, serverSide ? apiSecret : null);
+	const client = new StreamChat(apiKey, serverSide ? apiSecret : null);
+	client.setBaseURL(stagingURL);
+	return client;
 }
 
 export function getServerTestClient() {
@@ -29,7 +32,7 @@ export async function getTestClientForUser(userID, status, options) {
 }
 
 export function createUserToken(userID) {
-	const c = new StreamChat(apiKey, apiSecret);
+	const c = getTestClient(true);
 	return c.createToken(userID);
 }
 
@@ -88,8 +91,8 @@ export async function createUsers(userIDs) {
 	for (const userID of userIDs) {
 		users.push({ id: userID });
 	}
-	const response = await serverClient.updateUsers(users);
-	return response;
+
+	return await serverClient.updateUsers(users);
 }
 
 export function newEventPromise(client, event, count = 1) {
