@@ -808,19 +808,19 @@ export interface GetDevicesAPIResponse extends APIResponse {
 
 export interface MessageResponse {
   text: string;
-  attachments?: Attachment[];
+  attachments: Attachment[];
   parent_id?: string;
-  mentioned_users?: UserResponse[];
+  mentioned_users: UserResponse[];
   command?: string;
-  user?: User;
+  user: User;
   html: string;
   type: string;
-  latest_reactions?: ReactionResponse[];
-  own_reactions?: ReactionResponse[];
-  reaction_counts?: { [key: string]: number };
-  reaction_scores?: { [key: string]: number };
+  latest_reactions: ReactionResponse[];
+  own_reactions: ReactionResponse[];
+  reaction_counts: { [key: string]: number };
+  reaction_scores: { [key: string]: number };
   show_in_channel?: boolean;
-  reply_count?: number;
+  reply_count: number;
   created_at: string;
   updated_at: string;
   deleted_at?: string;
