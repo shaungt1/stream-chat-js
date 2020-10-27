@@ -1477,3 +1477,77 @@ export type User<UserType = UnknownType> = UserType & {
 };
 
 export type TypingStartEvent = Event;
+
+export interface SegmentData {
+  description: string;
+  filter: {
+    channel?: {
+      type: string;
+      id?: string | string[];
+    };
+    user?: {
+      [key: string]: string | string[];
+    };
+  };
+}
+
+export type Segment = {
+  id: string;
+  recipients: number;
+} & SegmentData;
+
+export interface CampaignData {
+  message: string;
+  segmentId: string;
+  attachments?: Attachment[];
+  pushNotifications?: boolean;
+  trackOpened?: boolean;
+}
+
+export type Campaign = { id: string } & CampaignData;
+
+export type CampaignStatus = {
+  campaignId: string;
+  segment: Segment;
+  createdAt?: Date;
+  scheduledAt?: Date;
+  updatedAt?: Date;
+} & (
+  | {
+      status: 'pending'; // the campaign has been created but never sent
+    }
+  | {
+      status: 'scheduled'; // the campaign has been sent with a schedule
+    }
+  | {
+      // the campaign has been sent and run successfully
+      completedAt: Date;
+      status: 'completed';
+    }
+  | {
+      // the campaign has been sent and run with errors
+      errors: string[];
+      failedAt: Date;
+      progress: {
+        sent: number;
+      };
+      status: 'failed';
+    }
+  | {
+      status: 'canceled'; // the campaign has been sent but canceled before the scheduled start
+    }
+  | {
+      // the campaign has been sent and is currently ongoing
+      progress: {
+        sent: number;
+        // ... maybe more?
+      };
+      status: 'in_progress';
+    }
+);
+
+export type CampaignPreview = {
+  campaignId: string;
+  message: string;
+  attachments?: Attachment[];
+};

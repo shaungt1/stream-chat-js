@@ -21,6 +21,10 @@ import {
   BanUserOptions,
   BlockList,
   BlockListResponse,
+  Campaign,
+  CampaignData,
+  CampaignPreview,
+  CampaignStatus,
   ChannelAPIResponse,
   ChannelData,
   ChannelFilters,
@@ -61,6 +65,8 @@ import {
   SearchAPIResponse,
   SearchOptions,
   SearchPayload,
+  Segment,
+  SegmentData,
   SendFileAPIResponse,
   StreamChatOptions,
   TestPushDataInput,
@@ -1758,6 +1764,67 @@ export class StreamChat<
     await this.post<APIResponse>(this.baseURL + '/channels/read', {
       ...data,
     });
+  }
+
+  async createSegment(segment: SegmentData): Promise<Segment> {
+    return await this.post(`${this.baseURL}/campaigns/segments`, segment);
+  }
+
+  async getSegment(id: string): Promise<Segment> {
+    return await this.get(`${this.baseURL}/campaigns/segments/${id}`);
+  }
+
+  async listSegments(params: {
+    limit?: number;
+    offset?: number;
+  }): Promise<{ segments: Segment[] }> {
+    return await this.get(`${this.baseURL}/campaigns/campaigns/segments`, params); // params are sent for dashboard pagination, maybe it would make sense to include searching/filters too
+  }
+
+  async deleteSegment(id: string): Promise<void> {
+    return await this.delete(`${this.baseURL}/campaigns/campaigns/segments/${id}`);
+  }
+
+  async createCampaign(data: CampaignData): Promise<Campaign> {
+    return await this.post(`${this.baseURL}/campaigns/campaigns`, data);
+  }
+
+  async getCampaign(id: string): Promise<Campaign> {
+    return await this.get(`${this.baseURL}/campaigns/campaigns/${id}`);
+  }
+
+  async listCampaigns(params: { limit?: number; offset?: number }): Promise<Campaign[]> {
+    return await this.get(`${this.baseURL}/campaigns/campaigns`, params); // params are sent for dashboard pagination, maybe it would make sense to include searching/filters too
+  }
+
+  async deleteCampaign(id: string): Promise<void> {
+    return await this.delete(`${this.baseURL}/campaigns/campaigns/${id}`);
+  }
+
+  async sendCampaign(
+    id: string,
+    params?: {
+      scheduledAt?: Date;
+    },
+  ): Promise<CampaignStatus> {
+    return await this.post(`${this.baseURL}/campaigns/campaigns/${id}/send`, params);
+  }
+
+  async previewCampaign(id: string, params: object): Promise<CampaignPreview> {
+    // params are used to populate the templating
+    return await this.get(`${this.baseURL}/campaigns/campaigns/${id}/preview`, params);
+  }
+
+  async getCampaignStatus(id: string): Promise<CampaignStatus> {
+    return await this.get(`${this.baseURL}/campaigns/campaigns/${id}/status`);
+  }
+
+  async cancelCampaign(id: string): Promise<CampaignStatus> {
+    return await this.post(`${this.baseURL}/campaigns/campaigns/${id}/cancel`);
+  }
+
+  async sendTestCampaign(id: string, userIds: string[]): Promise<CampaignStatus> {
+    return await this.post(`${this.baseURL}/campaigns/campaigns/${id}/test`, { userIds });
   }
 
   createCommand(data: CreateCommandOptions<CommandType>) {
