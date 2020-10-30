@@ -1498,20 +1498,18 @@ export type Segment = {
 
 export interface CampaignData {
   message: string;
-  segmentId: string;
+  segment_id: string;
   attachments?: Attachment[];
-  pushNotifications?: boolean;
-  trackOpened?: boolean;
+  push_notifications?: boolean;
+  track_opened?: boolean;
 }
 
-export type Campaign = { id: string } & CampaignData;
+export type Campaign = { id: string } & CampaignData & CampaignStatus;
 
 export type CampaignStatus = {
-  campaignId: string;
-  segment: Segment;
-  createdAt?: Date;
-  scheduledAt?: Date;
-  updatedAt?: Date;
+  created_at?: Date;
+  scheduled_at?: Date;
+  updated_at?: Date;
 } & (
   | {
       status: 'pending'; // the campaign has been created but never sent
@@ -1521,13 +1519,13 @@ export type CampaignStatus = {
     }
   | {
       // the campaign has been sent and run successfully
-      completedAt: Date;
+      completed_at: Date;
       status: 'completed';
     }
   | {
       // the campaign has been sent and run with errors
       errors: string[];
-      failedAt: Date;
+      failed_at: Date;
       progress: {
         sent: number;
       };
@@ -1547,7 +1545,7 @@ export type CampaignStatus = {
 );
 
 export type CampaignPreview = {
-  campaignId: string;
+  campaign_id: string;
   message: string;
   attachments?: Attachment[];
 };

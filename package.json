@@ -124,6 +124,7 @@
     "test-unit": "NODE_ENV=test mocha --exit --bail --timeout 3000 --require ./babel-register test/unit/*.js",
     "test": "NODE_ENV=test mocha --exit --bail --timeout 15000 --require ./babel-register test/integration/*.js --async-stack-traces",
     "test-local": "STREAM_LOCAL_TEST_RUN=true yarn test",
+    "test-local-campaigns": "STREAM_LOCAL_TEST_RUN=true NODE_ENV=test mocha --exit --bail --timeout 15000 --require ./babel-register test/integration/campaign.js --async-stack-traces",
     "testall": "NODE_ENV=test mocha --exit --timeout 3000 --require ./babel-register test/integration/*.js --async-stack-traces",
     "testwatch": "NODE_ENV=test nodemon ./node_modules/.bin/mocha --timeout 15000 --require test-entry.js test/test.js",
     "lint": "yarn run prettier && yarn run eslint",
