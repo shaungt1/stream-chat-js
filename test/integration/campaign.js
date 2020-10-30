@@ -545,6 +545,142 @@ const expect = chai.expect;
 					});
 				});
 			});
+			describe('updating a campaign', () => {
+				let segment;
+				before(async () => {
+					const resp = await doRequest(() =>
+						client.createSegment({
+							description: 'test segment',
+							filter: {
+								channel: { type: 'messaging' },
+							},
+						}),
+					);
+					expect(resp).not.to.have.property('exception_fields');
+					segment = resp.segment;
+					createdSegments.push(segment);
+				});
+				let campaign;
+				before(async () => {
+					const resp = await doRequest(() =>
+						client.createCampaign({
+							segment_id: segment.id,
+							message: 'a test campaign',
+						}),
+					);
+					expect(resp).not.to.have.property('exception_fields');
+					campaign = resp.campaign;
+					createdCampaigns.push(campaign);
+				});
+
+				describe('when the campaign is not found', () => {
+					it('returns 404', async () => {
+						const resp = await doRequest(() =>
+							client.updateCampaign(randomUUID, {
+								segment_id: segment.id,
+								message: 'updated!',
+							}),
+						);
+						expect(resp.StatusCode).to.equal(404);
+					});
+				});
+				describe('when the campaign is found', () => {
+					describe('when the update params are empty', () => {
+						it('returns 400', async () => {
+							const resp = await doRequest(() =>
+								client.updateCampaign(randomUUID, {}),
+							);
+							expect(resp.StatusCode).to.equal(400);
+						});
+					});
+					describe('when the segment is not found', () => {
+						it('returns 400', async () => {
+							const resp = await doRequest(() =>
+								client.updateCampaign(campaign.id, {
+									segment_id: randomUUID,
+									message: 'updated!',
+								}),
+							);
+							expect(resp.StatusCode).to.equal(400);
+						});
+					});
+					describe('when the update params are ok', () => {
+						it('updates the campaign', async () => {
+							const resp = await doRequest(() =>
+								client.updateCampaign(campaign.id, {
+									message: 'updated!',
+								}),
+							);
+							expect(resp).not.to.have.property('exception_fields');
+							expect(resp.id).to.equal(campaign.id);
+							expect(resp.message).to.equal('updated!');
+							const retrieved = await doRequest(() =>
+								client.getCampaign(campaign.id),
+							);
+							expect(retrieved).not.to.have.property('exception_fields');
+							expect(retrieved.message).to.equal('updated!');
+						});
+					});
+				});
+			});
+			describe('deleting a campaign', () => {
+				let segment;
+				before(async () => {
+					const resp = await doRequest(() =>
+						client.createSegment({
+							description: 'test segment',
+							filter: {
+								channel: { type: 'messaging' },
+							},
+						}),
+					);
+					expect(resp).not.to.have.property('exception_fields');
+					segment = resp.segment;
+					createdSegments.push(segment);
+				});
+				let campaign;
+				before(async () => {
+					const resp = await doRequest(() =>
+						client.createCampaign({
+							segment_id: segment.id,
+							message: 'a test campaign',
+						}),
+					);
+					expect(resp).not.to.have.property('exception_fields');
+					campaign = resp.campaign;
+					createdCampaigns.push(campaign);
+				});
+
+				describe('when the campaign is not found', () => {
+					it('returns 404', async () => {
+						const resp = await doRequest(() =>
+							client.deleteCampaign(randomUUID),
+						);
+						expect(resp.StatusCode).to.equal(404);
+					});
+				});
+				describe('when the campaign is found', () => {
+					before(async () => {
+						const resp = await doRequest(() =>
+							client.deleteCampaign(campaign.id),
+						);
+						expect(resp).not.to.have.property('exception_fields');
+					});
+					it('deletes the campaign', async () => {
+						const retrieved = await doRequest(() =>
+							client.getCampaign(campaign.id),
+						);
+						expect(retrieved.StatusCode).to.equal(404);
+					});
+					it('does not delete the related segment', async () => {
+						const retrieved = await doRequest(() =>
+							client.getSegment(segment.id),
+						);
+						expect(retrieved).not.to.have.property('exception_fields');
+						expect(retrieved.id).to.equal(segment.id);
+					});
+				});
+			});
 			describe('previewing a campaign', () => {
 				describe('when the campaign is not found', () => {
 					it('returns 404');

@@ -1811,6 +1811,14 @@ export class StreamChat<
     return await this.get(`${this.baseURL}/campaigns`, params); // params are sent for dashboard pagination, maybe it would make sense to include searching/filters too
   }
 
+  async updateCampaign(id: string, params: Partial<CampaignData>): Promise<Campaign> {
+    const { campaign } = await this.put<{ campaign: Campaign }>(
+      `${this.baseURL}/campaigns/${id}`,
+      params,
+    );
+    return campaign;
+  }
+
   async deleteCampaign(id: string): Promise<void> {
     return await this.delete(`${this.baseURL}/campaigns/${id}`);
   }
