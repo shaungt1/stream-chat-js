@@ -1489,6 +1489,7 @@ export interface SegmentData {
       [key: string]: string | string[];
     };
   };
+  name: string;
 }
 
 export type Segment = {

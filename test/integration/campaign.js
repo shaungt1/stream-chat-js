@@ -42,17 +42,30 @@ const expect = chai.expect;
 
 		describe('segments', () => {
 			describe('creating a segment', () => {
-				describe('when the description is empty', () => {
+				describe('when the name is empty', () => {
 					it('returns 400', async () => {
-						const resp = await doRequest(() => client.createSegment({}));
+						const resp = await doRequest(() =>
+							client.createSegment({ description: 'foo' }),
+						);
 						expect(resp.StatusCode).to.equal(400);
 					});
 				});
-				describe('when the description is not empty', () => {
+				describe('when the description is empty', () => {
+					it('returns 400', async () => {
+						const resp = await doRequest(() =>
+							client.createSegment({ name: 'foo' }),
+						);
+						expect(resp.StatusCode).to.equal(400);
+					});
+				});
+				describe('when the name/description are not empty', () => {
 					describe('when filter is empty', () => {
 						it('returns 400', async () => {
 							const resp = await doRequest(() =>
-								client.createSegment({ description: 'test-segment' }),
+								client.createSegment({
+									name: 'a-segment',
+									description: 'test-segment',
+								}),
 							);
 							expect(resp.StatusCode).to.equal(400);
 						});
@@ -62,6 +75,7 @@ const expect = chai.expect;
 							it('returns 400', async () => {
 								const resp = await doRequest(() =>
 									client.createSegment({
+										name: 'a-segment',
 										description: 'test-segment',
 										filter: { channel: { type: '' } },
 									}),
@@ -78,6 +92,7 @@ const expect = chai.expect;
 						before(async () => {
 							const resp = await doRequest(() =>
 								client.createSegment({
+									name: 'a-segment',
 									description: 'test-segment',
 									filter: {
 										channel: {
@@ -111,6 +126,7 @@ const expect = chai.expect;
 				before(async () => {
 					const resp = await doRequest(() =>
 						client.createSegment({
+							name: 'a-segment',
 							description: 'test-segment',
 							filter: { channel: { type: 'messaging' } },
 						}),
@@ -163,6 +179,7 @@ const expect = chai.expect;
 					before(async () => {
 						for (let i = 0; i < 5; i++) {
 							await client.createSegment({
+								name: `a-segment-${i}`,
 								description: `test-segment-${i}`,
 								filter: { channel: { type: 'messaging' } },
 							});
@@ -241,6 +258,7 @@ const expect = chai.expect;
 					before(async () => {
 						const resp = await doRequest(() =>
 							client.createSegment({
+								name: 'a-segment',
 								description: 'test segment',
 								filter: {
 									channel: { type: 'messaging' },
@@ -293,6 +311,7 @@ const expect = chai.expect;
 					before(async () => {
 						const resp = await doRequest(() =>
 							client.createSegment({
+								name: 'a-segment',
 								description: 'test segment',
 								filter: {
 									channel: { type: 'messaging' },
@@ -334,6 +353,7 @@ const expect = chai.expect;
 					before(async () => {
 						const resp = await doRequest(() =>
 							client.createSegment({
+								name: 'a-segment',
 								description: 'test segment',
 								filter: {
 									channel: { type: 'messaging' },
@@ -389,6 +409,7 @@ const expect = chai.expect;
 				before(async () => {
 					const resp = await doRequest(() =>
 						client.createSegment({
+							name: 'a-segment',
 							description: 'test segment',
 							filter: {
 								channel: { type: 'messaging' },
@@ -459,6 +480,7 @@ const expect = chai.expect;
 					before(async () => {
 						const resp = await doRequest(() =>
 							client.createSegment({
+								name: 'a-segment',
 								description: 'test segment',
 								filter: {
 									channel: { type: 'messaging' },
@@ -550,6 +572,7 @@ const expect = chai.expect;
 				before(async () => {
 					const resp = await doRequest(() =>
 						client.createSegment({
+							name: 'a-segment',
 							description: 'test segment',
 							filter: {
 								channel: { type: 'messaging' },
@@ -628,6 +651,7 @@ const expect = chai.expect;
 				before(async () => {
 					const resp = await doRequest(() =>
 						client.createSegment({
+							name: 'a-segment',
 							description: 'test segment',
 							filter: {
 								channel: { type: 'messaging' },
