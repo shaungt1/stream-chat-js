@@ -1478,17 +1478,22 @@ export type User<UserType = UnknownType> = UserType & {
 
 export type TypingStartEvent = Event;
 
+export type SegmentFilter =
+  | {
+      channel: {
+        type: string;
+        id?: string | string[];
+      };
+    }
+  | {
+      user?: {
+        [key: string]: string | string[];
+      };
+    };
+
 export interface SegmentData {
   description: string;
-  filter: {
-    channel?: {
-      type: string;
-      id?: string | string[];
-    };
-    user?: {
-      [key: string]: string | string[];
-    };
-  };
+  filter: SegmentFilter;
   name: string;
 }
 

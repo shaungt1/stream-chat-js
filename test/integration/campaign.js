@@ -87,6 +87,21 @@ const expect = chai.expect;
 					describe('when filter contains user', () => {
 						it('validates contents/props or returns 400'); // TODO
 					});
+					describe('when filter contains both user and channel', () => {
+						it('returns 400', async () => {
+							const resp = await doRequest(() =>
+								client.createSegment({
+									name: 'a-segment',
+									description: 'test-segment',
+									filter: {
+										channel: { type: 'messaging' },
+										user: { foo: 'bar' },
+									},
+								}),
+							);
+							expect(resp.StatusCode).to.equal(400);
+						});
+					});
 					describe('when filter is ok', () => {
 						let segment;
 						before(async () => {
@@ -248,6 +263,7 @@ const expect = chai.expect;
 						const resp = await doRequest(() =>
 							client.updateSegment(randomUUID, {
 								description: 'updated!',
+								filter: { channel: { type: 'messaging' } },
 							}),
 						);
 						expect(resp.StatusCode).to.equal(404);
