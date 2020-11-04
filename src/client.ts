@@ -1,18 +1,17 @@
 /* eslint no-unused-vars: "off" */
 /* global process */
 
-import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import https from 'https';
-import { v4 as uuidv4 } from 'uuid';
 import WebSocket from 'isomorphic-ws';
+import { v4 as uuidv4 } from 'uuid';
+import { CampaignsClient } from './campaigns';
 import { Channel } from './channel';
 import { ClientState } from './client_state';
 import { StableWSConnection } from './connection';
 import { isValidEventType } from './events';
-import { JWTUserToken, DevToken, CheckSignature } from './signing';
+import { CheckSignature, DevToken, JWTUserToken } from './signing';
 import { TokenManager } from './token_manager';
-import { isFunction, addFileToFormData, chatCodes } from './utils';
-
 import {
   APIResponse,
   AppSettings,
@@ -21,10 +20,6 @@ import {
   BanUserOptions,
   BlockList,
   BlockListResponse,
-  Campaign,
-  CampaignData,
-  CampaignPreview,
-  CampaignStatus,
   ChannelAPIResponse,
   ChannelData,
   ChannelFilters,
@@ -65,8 +60,6 @@ import {
   SearchAPIResponse,
   SearchOptions,
   SearchPayload,
-  Segment,
-  SegmentData,
   SendFileAPIResponse,
   StreamChatOptions,
   TestPushDataInput,
@@ -83,6 +76,7 @@ import {
   UserResponse,
   UserSort,
 } from './types';
+import { addFileToFormData, chatCodes, isFunction } from './utils';
 
 function isString(x: unknown): x is string {
   return typeof x === 'string' || x instanceof String;
@@ -1766,87 +1760,8 @@ export class StreamChat<
     });
   }
 
-  async createSegment(segment: SegmentData): Promise<Segment> {
-    return await this.post(`${this.baseURL}/segments`, { segment });
-  }
-
-  async getSegment(id: string): Promise<Segment> {
-    const { segment } = await this.get<{ segment: Segment }>(
-      `${this.baseURL}/segments/${id}`,
-    );
-    return segment;
-  }
-
-  async listSegments(params: {
-    limit?: number;
-    offset?: number;
-  }): Promise<{ segments: Segment[] }> {
-    return await this.get(`${this.baseURL}/segments`, params); // params are sent for dashboard pagination, maybe it would make sense to include searching/filters too
-  }
-
-  async updateSegment(id: string, params: Partial<SegmentData>): Promise<Segment> {
-    const { segment } = await this.put<{ segment: Segment }>(
-      `${this.baseURL}/segments/${id}`,
-      params,
-    );
-    return segment;
-  }
-
-  async deleteSegment(id: string): Promise<void> {
-    return await this.delete(`${this.baseURL}/segments/${id}`);
-  }
-
-  async createCampaign(campaign: CampaignData): Promise<Campaign> {
-    return await this.post(`${this.baseURL}/campaigns`, { campaign });
-  }
-
-  async getCampaign(id: string): Promise<Campaign> {
-    const { campaign } = await this.get<{ campaign: Campaign }>(
-      `${this.baseURL}/campaigns/${id}`,
-    );
-    return campaign;
-  }
-
-  async listCampaigns(params: { limit?: number; offset?: number }): Promise<Campaign[]> {
-    return await this.get(`${this.baseURL}/campaigns`, params); // params are sent for dashboard pagination, maybe it would make sense to include searching/filters too
-  }
-
-  async updateCampaign(id: string, params: Partial<CampaignData>): Promise<Campaign> {
-    const { campaign } = await this.put<{ campaign: Campaign }>(
-      `${this.baseURL}/campaigns/${id}`,
-      params,
-    );
-    return campaign;
-  }
-
-  async deleteCampaign(id: string): Promise<void> {
-    return await this.delete(`${this.baseURL}/campaigns/${id}`);
-  }
-
-  async sendCampaign(
-    id: string,
-    params?: {
-      scheduledAt?: Date;
-    },
-  ): Promise<CampaignStatus> {
-    return await this.post(`${this.baseURL}/campaigns/${id}/send`, params);
-  }
-
-  async previewCampaign(id: string, params: object): Promise<CampaignPreview> {
-    // params are used to populate the templating
-    return await this.get(`${this.baseURL}/campaigns/${id}/preview`, params);
-  }
-
-  async getCampaignStatus(id: string): Promise<CampaignStatus> {
-    return await this.get(`${this.baseURL}/campaigns/${id}/status`);
-  }
-
-  async cancelCampaign(id: string): Promise<CampaignStatus> {
-    return await this.post(`${this.baseURL}/campaigns/${id}/cancel`);
-  }
-
-  async sendTestCampaign(id: string, userIds: string[]): Promise<CampaignStatus> {
-    return await this.post(`${this.baseURL}/campaigns/${id}/test`, { userIds });
+  campaigns() {
+    return new CampaignsClient(this);
   }
 
   createCommand(data: CreateCommandOptions<CommandType>) {

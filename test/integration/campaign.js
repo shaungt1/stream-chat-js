@@ -20,7 +20,7 @@ const expect = chai.expect;
 	describe('campaigns', () => {
 		let client;
 		before(async () => {
-			client = await getServerTestClient();
+			client = await getServerTestClient().campaigns();
 		});
 
 		const cleanup = async () => {
