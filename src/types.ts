@@ -591,9 +591,13 @@ export type UserResponse<UserType = UnknownType> = User<UserType> & {
 
 export type BanUserOptions<UserType = UnknownType> = UnBanUserOptions & {
   ip_ban?: boolean;
+  moderator_id?: string;
   reason?: string;
   timeout?: number;
   user?: UserResponse<UserType>;
+  /**
+   * @deprecated please use moderator_id
+   */
   user_id?: string;
 };
 

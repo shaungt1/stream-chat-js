@@ -1604,6 +1604,10 @@ export class StreamChat<
    * @returns {Promise<APIResponse>}
    */
   async banUser(targetUserID: string, options?: BanUserOptions<UserType>) {
+    if (options?.user_id !== undefined) {
+      options.moderator_id = options.user_id;
+      delete options.user_id;
+    }
     return await this.post<APIResponse>(this.baseURL + '/moderation/ban', {
       target_user_id: targetUserID,
       ...options,

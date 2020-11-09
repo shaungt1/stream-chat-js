@@ -315,8 +315,8 @@ describe('Chat', () => {
 				const admin = { id: uuidv4(), role: 'admin' };
 				const serverClient = getTestClient(true);
 
-				await serverClient.updateUsers([{ id: banned }, admin]);
-				await serverClient.banUser(banned, { user_id: admin.id });
+				await serverClient.upsertUsers([{ id: banned }, admin]);
+				await serverClient.banUser(banned, { moderator_id: admin.id });
 			});
 
 			it('returns banned field on setUser', async () => {
@@ -353,8 +353,11 @@ describe('Chat', () => {
 				const admin = { id: uuidv4(), role: 'admin' };
 				const serverClient = getTestClient(true);
 
-				await serverClient.updateUsers([{ id: banned }, admin]);
-				await serverClient.banUser(banned, { timeout: -1, user_id: admin.id });
+				await serverClient.upsertUsers([{ id: banned }, admin]);
+				await serverClient.banUser(banned, {
+					timeout: -1,
+					moderator_id: admin.id,
+				});
 			});
 
 			it('banned is set to false', async () => {
@@ -2773,7 +2776,7 @@ describe('Chat', () => {
 			await serverAuthClient.banUser('eviluser', {
 				timeout: 60,
 				reason: 'Stop spamming your YouTube channel',
-				user_id: modUserID,
+				moderator_id: modUserID,
 			});
 		});
 		it('Mute', async () => {
