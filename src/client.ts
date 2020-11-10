@@ -214,7 +214,8 @@ export class StreamChat<
     this.setBaseURL('https://chat-us-east-1.stream-io-api.com');
 
     if (typeof process !== 'undefined' && process.env.STREAM_LOCAL_TEST_RUN) {
-      this.setBaseURL('http://localhost:3030');
+      const host = process.env.STREAM_LOCAL_TEST_HOST || 'http://localhost:3030';
+      this.setBaseURL(host);
     }
 
     // WS connection is initialized when setUser is called
