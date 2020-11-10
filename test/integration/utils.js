@@ -4,7 +4,7 @@ const expect = chai.expect;
 require('dotenv').config();
 const apiKey = process.env.STREAM_API_KEY;
 const apiSecret = process.env.STREAM_API_SECRET;
-const apiHost = process.env.STREAM_API_LOCAL_HOST || 'http://localhost:3030/';
+const apiHost = process.env.STREAM_LOCAL_TEST_HOST || 'http://localhost:3030/';
 
 export function getTestClient(serverSide) {
 	let client = new StreamChat(apiKey, serverSide ? apiSecret : null, {
