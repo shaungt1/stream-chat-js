@@ -11,6 +11,7 @@ export function getTestClient(serverSide) {
 		timeout: 15000,
 	});
 	client.setBaseURL(apiHost);
+	return client;
 }
 
 export function getServerTestClient() {
