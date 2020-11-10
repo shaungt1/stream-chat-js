@@ -4,9 +4,13 @@ const expect = chai.expect;
 require('dotenv').config();
 const apiKey = process.env.STREAM_API_KEY;
 const apiSecret = process.env.STREAM_API_SECRET;
+const apiHost = process.env.STREAM_API_LOCAL_HOST || 'http://localhost:3030/';
 
 export function getTestClient(serverSide) {
-	return new StreamChat(apiKey, serverSide ? apiSecret : null, { timeout: 15000 });
+	let client = new StreamChat(apiKey, serverSide ? apiSecret : null, {
+		timeout: 15000,
+	});
+	client.setBaseURL(apiHost);
 }
 
 export function getServerTestClient() {
